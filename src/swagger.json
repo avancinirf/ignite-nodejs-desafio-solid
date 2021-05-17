@@ -1,0 +1,284 @@
+{
+	"openapi": "3.0.0",
+	"info": {
+		"title": "Users API Documentation",
+		"description": "This is a simple API for registering and managing users.",
+		"version": "1.0.0",
+		"contact": {
+			"email": "avancini.rf@gmail.com"
+		}
+	},
+	"paths": {
+		"/users": {
+			"post": {
+				"tags": ["User"],
+				"summary": "Create User",
+				"description": "Create a user with name and e-mail. E-mail is a unique value",
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"email": {
+										"type": "string"
+									}
+								},
+								"example": {
+									"name": "Ricardo Avancini Fernandes",
+									"email": "avancini.rf@gmail.com"
+								}
+							}
+						}
+					}
+					
+				},
+				"responses": {
+					"201": {
+						"description": "Created"
+					},
+					"400": {
+						"description": "User already exists."
+					}
+				}
+			},
+			"get": {
+				"tags": ["User"],
+				"summary": "List Users",
+				"description": "List all created users. Only an admin user can access the information.",
+				"parameters": [
+					{
+						"in": "header",
+						"name": "user_id",
+						"schema": {
+							"type": "string",
+							"format": "uuid"
+						},
+						"required": true,
+						"description": "User ID is a UUID V4."
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Success",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"type": "object",
+										"properties": {
+											"id": {
+												"type": "string"
+											},
+											"name": {
+												"type": "string"
+											},
+											"email": {
+												"type": "string"
+											},
+											"admin": {
+												"type": "boolean"
+											},
+											"created_at": {
+												"type": "string"
+											},
+											"updated_at": {
+												"type": "string"
+											}
+										},
+										"example": [
+											{
+												"id": "057a6101-1f7c-4dd4-aff4-f786eae9db97",
+												"admin": false,
+												"name": "Ricardo Avancini",
+												"email": "teste_01@gmail.com",
+												"created_at": "2021-05-17T16:05:13.658Z",
+												"updated_at": "2021-05-17T16:05:13.658Z"
+											},
+											{
+												"id": "c4630f86-8ff9-47ba-841b-ac2a02aad57e",
+												"admin": true,
+												"name": "Ricardo Fernandes",
+												"email": "teste_02@gmail.com",
+												"created_at": "2021-05-17T16:05:23.706Z",
+												"updated_at": "2021-05-17T16:05:37.266Z"
+											}
+										]
+									}
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Permission denied.",
+						"content": {
+							"application/json": {
+							  "schema": {
+								"type": "object",
+								"properties": {
+								  "error": "string"
+								},
+								"example": {
+								  "error": "Permission denied."
+								}
+							  }
+							}
+						  }
+					}
+				}
+			}
+		},
+		"/users/{user_id}": {
+			"get": {
+			  "tags": ["User"],
+			  "summary": "Return a specific user profile.",
+			  "parameters": [
+				{
+				  "in": "path",
+				  "name": "user_id",
+				  "required": true,
+				  "description": "Valid user ID (UUID V4).",
+				  "schema": {
+					"type": "string",
+					"format": "uuid"
+				  }
+				}
+			  ],
+			  "responses": {
+				"200": {
+				  "description": "Success.",
+				  "content": {
+					"application/json": {
+					  "schema": {
+						"type": "object",
+						"properties": {
+							"id": {
+								"type": "string"
+							},
+							"name": {
+								"type": "string"
+							},
+							"email": {
+								"type": "string"
+							},
+							"admin": {
+								"type": "boolean"
+							},
+							"created_at": {
+								"type": "string"
+							},
+							"updated_at": {
+								"type": "string"
+							}
+						},
+						"example": {
+							"id": "057a6101-1f7c-4dd4-aff4-f786eae9db97",
+							"admin": false,
+							"name": "Ricardo Avancini",
+							"email": "teste_01@gmail.com",
+							"created_at": "2021-05-17T16:05:13.658Z",
+							"updated_at": "2021-05-17T16:05:13.658Z"
+						}
+					  }
+					}
+				  }
+				},
+				"404": {
+				  "description": "User not found.",
+				  "content": {
+					"application/json": {
+					  "schema": {
+						"type": "object",
+						"properties": {
+						  "error": "string"
+						},
+						"example": {
+						  "error": "User not found."
+						}
+					  }
+					}
+				  }
+				}
+			  }
+			}
+		},
+		"/users/{user_id}/admin": {
+		  "patch": {
+			"tags": ["User"],
+			"summary": "Turn user an admin.",
+			"parameters": [
+			  {
+				"in": "path",
+				"name": "user_id",
+				"required": true,
+				"schema": {
+				  "type": "string",
+				  "format": "uuid"
+				}
+			  }
+			],
+			"responses": {
+			  "200": {
+				"description": "Success.",
+				"content": {
+				  "application/json": {
+					"schema": {
+					  "type": "object",
+					  "properties": {
+						"id": {
+							"type": "string"
+						},
+						"name": {
+							"type": "string"
+						},
+						"email": {
+							"type": "string"
+						},
+						"admin": {
+							"type": "boolean"
+						},
+						"created_at": {
+							"type": "string"
+						},
+						"updated_at": {
+							"type": "string"
+						}
+					},
+					  "example": {
+						"id": "12879d5e-cd37-4915-ae18-f88b941b8c63",
+						"admin": true,
+						"name": "Ricardo Avancini Fernandes",
+						"email": "avancini.rf@gmail.com",
+						"created_at": "2021-05-17T16:25:53.045Z",
+						"updated_at": "2021-05-17T16:26:06.940Z"
+					  }
+					}
+				  }
+				}
+			  },
+			  "404": {
+				"description": "User not found.",
+				"content": {
+				  "application/json": {
+					"schema": {
+					  "type": "object",
+					  "properties": {
+						"error": "string"
+					  },
+					  "example": {
+						"error": "User not found."
+					  }
+					}
+				  }
+				}
+			  }
+			}
+		  }
+		}
+	}
+
+}
